@@ -22,7 +22,7 @@ public class PaymentsController : Controller
 
     // GET api/Payments/{id}
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<PostPaymentResponse?>> GetPaymentAsync(Guid id)
+    public async Task<ActionResult<PaymentResponse?>> GetPaymentAsync(Guid id)
     {
         var payment = _paymentsRepository.GetPayment(id);
 
@@ -31,13 +31,13 @@ public class PaymentsController : Controller
     
     // For demonstration purposes.
     [HttpGet]
-    public async Task<ActionResult<PostPaymentResponse?>> GetAllPaymentsAsync()
+    public async Task<ActionResult<PaymentResponse?>> GetAllPaymentsAsync()
     {
         return new OkObjectResult(_paymentsRepository.GetAllPayments());
     }
     
     [HttpPost]
-    public async Task<ActionResult<PostPaymentResponse?>> PostNewPaymentAsync(PostPaymentRequest request)
+    public async Task<ActionResult<PaymentResponse?>> PostNewPaymentAsync(PaymentRequest request)
     {
         var response = _paymentsRepository.ProcessPayment(request, out JObject errorJObj);
         

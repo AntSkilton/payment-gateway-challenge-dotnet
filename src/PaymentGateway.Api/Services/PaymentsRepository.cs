@@ -13,24 +13,24 @@ namespace PaymentGateway.Api.Services;
 
 public class PaymentsRepository
 {
-    private List<PostPaymentResponse> _paymentResponses;
+    private List<PaymentResponse> _paymentResponses;
 
     public PaymentsRepository()
     {
         _paymentResponses = PaymentsHelper.GeneratePaymentStubs();
     }
 
-    public PostPaymentResponse GetPayment(Guid id)
+    public PaymentResponse GetPayment(Guid id)
     {
         return _paymentResponses.FirstOrDefault(p => p.Id == id);
     }
     
-    public IEnumerable<PostPaymentResponse> GetAllPayments()
+    public IEnumerable<PaymentResponse> GetAllPayments()
     {
         return _paymentResponses;
     }
 
-    public PostPaymentResponse ProcessPayment(PostPaymentRequest request, out JObject errorJObj)
+    public PaymentResponse ProcessPayment(PaymentRequest request, out JObject errorJObj)
     {
         var errorObj = new ErrorObj
         {
@@ -39,7 +39,7 @@ public class PaymentsRepository
             ErrorMessages = new List<string>()
         };
 
-        var response = new PostPaymentResponse
+        var response = new PaymentResponse
         {
             Id = Guid.NewGuid(),
             Status = PaymentStatus.Rejected,
@@ -53,7 +53,7 @@ public class PaymentsRepository
         #region Card Number Validation
         var cardNumberAsString = request.CardNumber.ToString();
 
-        if (cardNumberAsString.Length < 1)
+        if (cardNumberAsString.Length < 2)
         {
             errorObj.ValidationCodes.Add(ValidationCodes.CardNumberNull);
             errorObj.ErrorMessages.Add("Enter a card number.");
@@ -64,10 +64,13 @@ public class PaymentsRepository
             errorObj.ValidationCodes.Add(ValidationCodes.CardNumberIncorrectLength);
             errorObj.ErrorMessages.Add("Card number needs to be be between 14 and 19 characters.");
         }
-        
-        var cardNumAsFour = cardNumberAsString.Substring(cardNumberAsString.Length - 4);
-        response.CardNumberLastFour = int.Parse(cardNumAsFour);
 
+        if (cardNumberAsString.ToCharArray().Length > 3)
+        {
+            var cardNumAsFour = cardNumberAsString.Substring(cardNumberAsString.Length - 4);
+            response.CardNumberLastFour = int.Parse(cardNumAsFour);
+        }
+        
         var regex = new Regex(@"^[0-9]+$");
         foreach (var character in cardNumberAsString)
         {
@@ -92,10 +95,10 @@ public class PaymentsRepository
             errorObj.ErrorMessages.Add("Enter a year in the future or the current year.");
         }
         
-        var requestDate = DateTime.Parse(request.ExpiryMonth + "/" + request.ExpiryYear);
+        var canParseRequestDate = DateTime.TryParse($"{request.ExpiryMonth:D2}/{request.ExpiryYear}", out var requestDate);
         var todayDate = DateTime.Parse(DateTime.Today.Month + "/" + DateTime.Today.Year);
         
-        if (DateTime.Compare(todayDate, requestDate) == 1) // In the past
+        if (!canParseRequestDate || DateTime.Compare(todayDate, requestDate) == 1) // In the past
         {
             errorObj.ValidationCodes.Add(ValidationCodes.ExpiryDateInThePast);
             errorObj.ErrorMessages.Add("Enter a date which is this month/year or in the future.");

@@ -2,7 +2,7 @@
 
 namespace PaymentGateway.Api.Models.Requests;
 
-public class PostPaymentRequest
+public class PaymentRequest
 {
     [Required]
     public long CardNumber { get; set; }

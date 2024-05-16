@@ -6,11 +6,11 @@ namespace PaymentGateway.Api.Helpers;
 public static class PaymentsHelper
 {
     public const string c_StaticGuidToTest = "33e3091a-7f72-4fa8-80e6-17a1bb80f0d0";
-    public static List<PostPaymentResponse> GeneratePaymentStubs()
+    public static List<PaymentResponse> GeneratePaymentStubs()
     {
-        var stubResponses = new List<PostPaymentResponse>()
+        var stubResponses = new List<PaymentResponse>()
         {
-            new PostPaymentResponse
+            new PaymentResponse
             {
                 Id = Guid.Parse(c_StaticGuidToTest),
                 Status = PaymentStatus.Authorized,
@@ -20,7 +20,7 @@ public static class PaymentsHelper
                 Currency = "GBP",
                 Amount = 1000
             },
-            new PostPaymentResponse
+            new PaymentResponse
             {
                 Id = Guid.NewGuid(),
                 Status = PaymentStatus.Rejected,
@@ -30,7 +30,7 @@ public static class PaymentsHelper
                 Currency = "USD",
                 Amount = 19
             },
-            new PostPaymentResponse
+            new PaymentResponse
             {
                 Id = Guid.NewGuid(),
                 Status = PaymentStatus.Declined,
