@@ -32,7 +32,7 @@ The variable was called `CardNumberLastFour`, implying 4 characters only, but I 
 The `Amount` property is already in an `int` format in the backend here, representing the sum in the minor currency unit. If there was an int to float conversion process, I imagine it may occur in the frontend for view purposes only so no floating point inaccuracies could be stored. I too encourage the use of keeping currencies in the lowest most common denomination for data consistency.
 
 ### Validation
-The `[Required]` attributes and type checking allows the response to throw a `BadRequest 400` error for some of the validation requirements. For other more specific validation checks, I've included the custom logic which passes the response out as a `400` error if encountered too.
+The `[Required]` attributes and type checking allows the response to throw a `BadRequest 400` error for some of the validation requirements where type checking prevents a `200` response such as the card number field allowing alphabet characters. For other more specific validation checks, I've included the custom logic which passes the response out as a `400` error if encountered too.
 
 To ensure the consumer has a reliable error handling experience, a separate "Error" JSON object model has been made to store the status code and error message for any API consumer.
 
