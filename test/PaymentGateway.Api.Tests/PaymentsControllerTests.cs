@@ -20,8 +20,7 @@ namespace PaymentGateway.Api.Tests;
 public class PaymentsControllerTests
 {
     private readonly Random _random = new();
-    //UnitOfWork_ExpectedBehaviour_ScenarioUnderTest
-    
+
     private PaymentRequest _validPaymentRequest;
 
     public PaymentsControllerTests()
